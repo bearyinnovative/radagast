@@ -6,34 +6,35 @@ Tender Of Beasts
 
 ```
 $ ls
-radagast radagast.yml
+radagast radagast.toml
 $ radagast
 ```
 
-## radagast.yml
+## radagast.toml
 
-```yaml
----
-tasks:
-  - monitor-stale-issues
-  - ...
+```toml
+tasks = [
+  "monitor-stale-issues"
+]
 
-monitor-stale-issues:
-  github:
-    token: xxx
-  repos:
-    - repo: bearyinnovative/snitch
-      users:g
-        - bcho: hbc
-        - xtang: tangxm
-      bearychat:
-        webhook: https://hook.bearychat.com/incoming/xxx
-    - repo: bearyinnovative/pensieve
-      users:
-        - L42y: l42y
-        - xtang: tangxm
-      bearychat:
-        webhook: https://hook.bearychat.com/incoming/xxx
+[monitor-stale-issues]
+github-token = "xxx"
+
+[[moniitor-stale-issues.repos]]
+repo = bearyinnovative/snitch
+users = {
+  bcho = "hbc"
+  xtang = "tangxm"
+}
+bearychat-webhook = "https://hook.bearychat.com/incoming/xxx"
+
+[[moniitor-stale-issues.repos]]
+repo = bearyinnovative/pensieve
+users = {
+  L42y = l42y
+  xtang = "tangxm"
+}
+bearychat-webhook = "https://hook.bearychat.com/incoming/xxx"
 ```
 
 ## Build

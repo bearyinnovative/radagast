@@ -1,0 +1,24 @@
+tasks = [
+  "monitor-stale-issues"
+]
+
+[monitor-stale-issues]
+github-token = "xxx"
+
+[[monitor-stale-issues.repos]]
+
+repo = "bearyinnovative/snitch"
+users = [
+  {bcho = "hbc"},
+  {xtang = "tangxm"}
+]
+bearychat-webhook = "https://hook.bearychat.com/incoming/xxx"
+
+[[monitor-stale-issues.repos]]
+
+repo = "bearyinnovative/pensieve"
+users = [
+  {L42y = "l42y"},
+  {xtang = "tangxm"}
+]
+bearychat-webhook = "https://hook.bearychat.com/incoming/xxx"
