@@ -405,6 +405,14 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/hashicorp/go-multierror",
+			"repository": "https://github.com/hashicorp/go-multierror",
+			"vcs": "git",
+			"revision": "8c5f0ad9360406a3807ce7de6bc73269a91a6e51",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/pelletier/go-buffruneio",
 			"repository": "https://github.com/pelletier/go-buffruneio",
 			"vcs": "git",

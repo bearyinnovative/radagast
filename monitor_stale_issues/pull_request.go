@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/go-github/github"
+	"github.com/hashicorp/go-multierror"
 )
 
 var checkableDuration = time.Duration(24 * time.Hour)
@@ -14,10 +15,10 @@ var stalePullRequestListOpts = &github.PullRequestListOptions{
 	Direction: "desc",
 }
 
-func checkStalePullRequests(github *github.Client, repo repo) error {
+func checkStalePullRequests(githubClient *github.Client, repo repo) error {
 	logf("checking stale pr for %s", repo)
 
-	prs, _, err := github.PullRequests.List(
+	prs, _, err := githubClient.PullRequests.List(
 		repo.owner,
 		repo.name,
 		stalePullRequestListOpts,
@@ -26,13 +27,19 @@ func checkStalePullRequests(github *github.Client, repo repo) error {
 		return err
 	}
 
+	checkErrChan := make(chan error, len(prs))
 	for _, pr := range prs {
-		if err := checkStalePullRequest(github, repo, pr); err != nil {
-			return err
-		}
+		go func(pr *github.PullRequest) {
+			checkErrChan <- checkStalePullRequest(githubClient, repo, pr)
+		}(pr)
 	}
 
-	return nil
+	var checkErr *multierror.Error
+	for e := range checkErrChan {
+		checkErr = multierror.Append(checkErr, e)
+	}
+
+	return checkErr.ErrorOrNil()
 }
 
 func isStalePullRequest(pr *github.PullRequest) (bool, string) {
