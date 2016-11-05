@@ -1,6 +1,8 @@
 package monitor_stale_issues
 
 import (
+	"context"
+	"fmt"
 	"strings"
 	"time"
 
@@ -15,7 +17,7 @@ var stalePullRequestListOpts = &github.PullRequestListOptions{
 	Direction: "desc",
 }
 
-func checkStalePullRequests(githubClient *github.Client, repo repo) error {
+func checkStalePullRequests(c context.Context, githubClient *github.Client, repo repo) error {
 	logf("checking stale pr for %s", repo)
 
 	prs, _, err := githubClient.PullRequests.List(
@@ -30,7 +32,7 @@ func checkStalePullRequests(githubClient *github.Client, repo repo) error {
 	checkErrChan := make(chan error, len(prs))
 	for _, pr := range prs {
 		go func(pr *github.PullRequest) {
-			checkErrChan <- checkStalePullRequest(githubClient, repo, pr)
+			checkErrChan <- checkStalePullRequest(c, githubClient, repo, pr)
 		}(pr)
 	}
 
@@ -64,7 +66,7 @@ func isStalePullRequest(pr *github.PullRequest) (bool, string) {
 	return true, ""
 }
 
-func checkStalePullRequest(githubClient *github.Client, repo repo, pr *github.PullRequest) (err error) {
+func checkStalePullRequest(c context.Context, githubClient *github.Client, repo repo, pr *github.PullRequest) (err error) {
 	prNumber := *pr.Number
 	prTitle := *pr.Title
 
@@ -100,9 +102,37 @@ func checkStalePullRequest(githubClient *github.Client, repo repo, pr *github.Pu
 		delete(unreviewedAssignees, *commentUser.ID)
 	}
 
-	for _, unreviewedAssignee := range unreviewedAssignees {
-		logf("unreviewed assignee: %s", *unreviewedAssignee.Login)
+	var unreviewedUsers []bearychatUser
+	for _, assignee := range unreviewedAssignees {
+		unreviewedUsers = append(unreviewedUsers, getBearyChatUserFromGitHubUser(repo, assignee))
 	}
+
+	return notifyUnreviewdAssignees(c, repo, pr, unreviewedUsers)
+}
+
+func notifyUnreviewdAssignees(c context.Context, repo repo, pr *github.PullRequest, users []bearychatUser) error {
+	if len(users) < 1 {
+		return nil
+	}
+
+	var report string
+
+	prNumber := *pr.Number
+	prTitle := *pr.Title
+	report = fmt.Sprintf(
+		"`%s` PR [#%d](https://github.com/%s/pull/%d):%s\n \n还没有 review",
+		repo.name,
+		prNumber,
+		repo.Slug(),
+		prNumber,
+		prTitle,
+	)
+
+	for _, user := range users {
+		report = fmt.Sprintf("%s @%s", report, user.name)
+	}
+
+	repo.ReportChan <- report
 
 	return nil
 }

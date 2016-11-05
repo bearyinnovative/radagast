@@ -33,14 +33,18 @@ func Execute(ctx context.Context) error {
 		return err
 	}
 
-	if err := checkRepos(github, repos); err != nil {
+	for _, repo := range repos {
+		go repo.SentReport(ctx)
+	}
+
+	if err := checkRepos(ctx, github, repos); err != nil {
 		return err
 	}
 
 	ticker := time.NewTicker(checkInterval)
 	defer ticker.Stop()
 	for range ticker.C {
-		if err := checkRepos(github, repos); err != nil {
+		if err := checkRepos(ctx, github, repos); err != nil {
 			return err
 		}
 	}

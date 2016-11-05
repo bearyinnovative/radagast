@@ -25,13 +25,13 @@ func ToContext(c context.Context, client *bc.RTMClient) context.Context {
 	return context.WithValue(c, RTM_CLIENT_KEY, client)
 }
 
-func MustMakeContext(ctx context.Context) context.Context {
-	config := config.FromContext(ctx)
+func MustMakeContext(c context.Context) context.Context {
+	config := config.FromContext(c)
 	rtmToken := config[CONFIG_KEY].(string)
 	rtmClient, err := bc.NewRTMClient(rtmToken)
 	if err != nil {
 		panic(err)
 	}
 
-	return ToContext(ctx, rtmClient)
+	return ToContext(c, rtmClient)
 }
