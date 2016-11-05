@@ -344,6 +344,14 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/bcho/bearychat.go",
+			"repository": "https://github.com/bcho/bearychat.go",
+			"vcs": "git",
+			"revision": "73623f83f4e5ca81574f650792cbaa147fdb2738",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/golang/glog",
 			"repository": "https://github.com/golang/glog",
 			"vcs": "git",
@@ -405,6 +413,14 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/gorilla/websocket",
+			"repository": "https://github.com/gorilla/websocket",
+			"vcs": "git",
+			"revision": "2aff870ef83507abb46472eae82449f7a4c464c5",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/hashicorp/go-multierror",
 			"repository": "https://github.com/hashicorp/go-multierror",
 			"vcs": "git",
@@ -425,6 +441,14 @@
 			"repository": "https://github.com/pelletier/go-toml",
 			"vcs": "git",
 			"revision": "45932ad32dfdd20826f5671da37a5f3ce9f26a8d",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/pkg/errors",
+			"repository": "https://github.com/pkg/errors",
+			"vcs": "git",
+			"revision": "248dadf4e9068a0b3e79f02ed0a610d935de5302",
 			"branch": "master",
 			"notests": true
 		},
