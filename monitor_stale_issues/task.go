@@ -20,7 +20,7 @@ var (
 	checkInterval = time.Duration(24 * time.Hour)
 	//checkInterval = time.Duration(30 * time.Second)
 
-	staleDuration = time.Duration(24 * time.Hour)
+	checkableDuration = time.Duration(24 * time.Hour)
 )
 
 type repo struct {
@@ -118,8 +118,9 @@ func checkStalePullRequest(githubClient *github.Client, repo repo, pr *github.Pu
 	if len(pr.Assignees) < 1 {
 		return
 	}
-	if (*pr.CreatedAt).Add(staleDuration).After(time.Now()) {
-		// opened within `staleDuration`
+	if (*pr.CreatedAt).Add(checkableDuration).After(time.Now()) {
+		// GitHub's pr comment API seems like have a 24 hours lag,
+		// so we have to check later.
 		return
 	}
 	if strings.HasPrefix(strings.ToLower(prTitle), "[wip]") {
