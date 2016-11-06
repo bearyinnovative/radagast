@@ -37,8 +37,8 @@ func checkStalePullRequests(c context.Context, githubClient *github.Client, repo
 	}
 
 	var checkErr *multierror.Error
-	for e := range checkErrChan {
-		checkErr = multierror.Append(checkErr, e)
+	for i := 0; i < len(prs); i++ {
+		checkErr = multierror.Append(checkErr, <-checkErrChan)
 	}
 
 	return checkErr.ErrorOrNil()
@@ -104,7 +104,7 @@ func checkStalePullRequest(c context.Context, githubClient *github.Client, repo 
 
 	var unreviewedUsers []bearychatUser
 	for _, assignee := range unreviewedAssignees {
-		unreviewedUsers = append(unreviewedUsers, getBearyChatUserFromGitHubUser(repo, assignee))
+		unreviewedUsers = append(unreviewedUsers, getBearyChatUserFromGitHubUser(c, assignee))
 	}
 
 	return notifyUnreviewdAssignees(c, repo, pr, unreviewedUsers)

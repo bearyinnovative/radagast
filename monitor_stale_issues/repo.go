@@ -17,8 +17,7 @@ type repo struct {
 	owner string
 	name  string
 
-	bearychatUserAliases map[string]string
-	bearychatVchannelId  string
+	bearychatVchannelId string
 
 	ReportChan chan string
 }
@@ -26,21 +25,16 @@ type repo struct {
 func getReposFromConfig(config config.Config) (repos []repo, err error) {
 	for _, irepo := range config.GetSlice("repos") {
 		repoConfig := irepo.Config()
-		userAliases := make(map[string]string)
-		for k, v := range repoConfig.Get("bearychat-users").Config() {
-			userAliases[k] = v.(string)
-		}
 		repoSlug := strings.Split(repoConfig.Get("repo").String(), "/")
 		if len(repoSlug) != 2 {
 			err = errors.New("repo name should be `owner/name`")
 			return
 		}
 		repos = append(repos, repo{
-			owner:                repoSlug[0],
-			name:                 repoSlug[1],
-			bearychatUserAliases: userAliases,
-			bearychatVchannelId:  repoConfig.Get("bearychat-vchannel-id").String(),
-			ReportChan:           make(chan string, 1024),
+			owner:               repoSlug[0],
+			name:                repoSlug[1],
+			bearychatVchannelId: repoConfig.Get("bearychat-vchannel-id").String(),
+			ReportChan:          make(chan string, 1024),
 		})
 	}
 
@@ -50,7 +44,7 @@ func getReposFromConfig(config config.Config) (repos []repo, err error) {
 func (r repo) String() string { return r.Slug() }
 func (r repo) Slug() string   { return fmt.Sprintf("%s/%s", r.owner, r.name) }
 
-func (r repo) SentReport(ctx context.Context) {
+func (r repo) SendReport(ctx context.Context) {
 	bc := bearychat.RTMClientFromContext(ctx)
 	for report := range r.ReportChan {
 		bearychat.SendToVchannel(
@@ -76,14 +70,16 @@ func checkRepos(ctx context.Context, github *github.Client, repos []repo) error 
 	}
 
 	var checkErr *multierror.Error
-	for e := range checkErrChan {
-		checkErr = multierror.Append(checkErr, e)
+	for i := 0; i < len(repos); i++ {
+		checkErr = multierror.Append(checkErr, <-checkErrChan)
 	}
 
 	return checkErr.ErrorOrNil()
 }
 
 func checkRepo(c context.Context, github *github.Client, repo repo) error {
+	go repo.SendReport(c)
+
 	if err := checkStalePullRequests(c, github, repo); err != nil {
 		return err
 	}
@@ -95,14 +91,13 @@ type bearychatUser struct {
 	name string
 }
 
-func getBearyChatUserFromGitHubUser(repo repo, ghUser *github.User) (u bearychatUser) {
-	ghUserLogin := *ghUser.Login
-
-	if name, present := repo.bearychatUserAliases[ghUserLogin]; present {
-		u.name = name
-	} else {
-		u.name = ghUserLogin
+func getBearyChatUserFromGitHubUser(c context.Context, ghUser *github.User) (u bearychatUser) {
+	ghUsers := bearychat.GitHubUsersFromContext(c)
+	ghUserName := *ghUser.Login
+	u.name = ghUsers.Get(ghUserName).String()
+	if u.name == "" {
+		u.name = ghUserName
 	}
 
-	return u
+	return
 }

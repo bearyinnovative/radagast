@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	KEY_RTM_CLIENT = "radagast:bearychat.rtm-client"
-	KEY_USERS      = "radagast:bearychat.users"
+	KEY_RTM_CLIENT   = "radagast:bearychat.rtm-client"
+	KEY_GITHUB_USERS = "radagast:bearychat.github-users"
 )
 
 func RTMClientFromContext(c context.Context) *bc.RTMClient {
@@ -21,13 +21,13 @@ func RTMClientFromContext(c context.Context) *bc.RTMClient {
 	panic("unable to get bearychat rtm client from context")
 }
 
-func UsersFromContext(c context.Context) config.Config {
-	iusers := c.Value(KEY_USERS)
+func GitHubUsersFromContext(c context.Context) config.Config {
+	iusers := c.Value(KEY_GITHUB_USERS)
 	if users, ok := iusers.(config.Config); ok {
 		return users
 	}
 
-	panic("unable to get bearychat users from context")
+	panic("unable to get bearychat github users from context")
 }
 
 func MustMakeContext(c context.Context) context.Context {
@@ -40,8 +40,8 @@ func MustMakeContext(c context.Context) context.Context {
 	}
 	c = context.WithValue(c, KEY_RTM_CLIENT, rtmClient)
 
-	users := config.Get("bearychat.users").Config()
-	c = context.WithValue(c, KEY_USERS, users)
+	users := config.Get("bearychat.github-users").Config()
+	c = context.WithValue(c, KEY_GITHUB_USERS, users)
 
 	return c
 }

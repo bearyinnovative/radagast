@@ -23,7 +23,7 @@ api-token = ""
 [bearychat]
 rtm-token = "123"
 
-    [bearychat.users]
+    [bearychat.github-users]
     bcho = "hbc"
     xtang = "tangxm"
 
