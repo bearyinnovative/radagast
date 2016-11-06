@@ -23,7 +23,6 @@ type repo struct {
 	ReportChan chan string
 }
 
-// TODO: better way to parse config
 func getReposFromConfig(config config.Config) (repos []repo, err error) {
 	for _, irepo := range config.GetSlice("repos") {
 		repoConfig := irepo.Config()
