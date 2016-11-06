@@ -19,31 +19,51 @@ var (
 	//checkInterval = time.Duration(30 * time.Second)
 )
 
-func Execute(ctx context.Context) error {
+type task struct {
+	config       config.Config
+	repos        []repo
+	githubClient *github.Client
+}
+
+func makeTask(ctx context.Context) (*task, error) {
 	config := config.FromContext(ctx).Get(TaskName).Config()
 
 	repos, err := getReposFromConfig(config)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	github, err := getGitHubClient(config)
 	if err != nil {
+		return nil, err
+	}
+
+	return &task{config, repos, github}, nil
+}
+
+func ExecuteOnce(ctx context.Context) error {
+	task, err := makeTask(ctx)
+	if err != nil {
 		return err
 	}
 
-	for _, repo := range repos {
-		go repo.SentReport(ctx)
+	return checkRepos(ctx, task.githubClient, task.repos)
+}
+
+func Execute(ctx context.Context) error {
+	task, err := makeTask(ctx)
+	if err != nil {
+		return err
 	}
 
-	if err := checkRepos(ctx, github, repos); err != nil {
+	if err := checkRepos(ctx, task.githubClient, task.repos); err != nil {
 		return err
 	}
 
 	ticker := time.NewTicker(checkInterval)
 	defer ticker.Stop()
 	for range ticker.C {
-		if err := checkRepos(ctx, github, repos); err != nil {
+		if err := checkRepos(ctx, task.githubClient, task.repos); err != nil {
 			return err
 		}
 	}
