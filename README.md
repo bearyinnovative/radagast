@@ -14,7 +14,7 @@ $ radagast
 
 ```toml
 tasks = [
-  "monitor-stale-issues"
+  "pullrequests"
 ]
 
 [github]
@@ -27,12 +27,12 @@ rtm-token = "123"
     bcho = "hbc"
     xtang = "tangxm"
 
-[monitor-stale-issues]
-    [[monitor-stale-issues.repos]]
+[pullrequests]
+    [[pullrequests.repos]]
     repo = "bearyinnovative/snitch"
     bearychat-vchannel-id = "=bw52P"
 
-    [[monitor-stale-issues.repos]]
+    [[pullrequests.repos]]
     repo = "bearyinnovative/pensieve"
     bearychat-vchannel-id = "=bw52Q"
 ```

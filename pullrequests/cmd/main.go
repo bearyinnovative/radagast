@@ -7,7 +7,7 @@ import (
 	"github.com/bearyinnovative/radagast/bearychat"
 	"github.com/bearyinnovative/radagast/config"
 	"github.com/bearyinnovative/radagast/github"
-	"github.com/bearyinnovative/radagast/task"
+	task "github.com/bearyinnovative/radagast/pullrequests"
 )
 
 func main() {
@@ -16,7 +16,7 @@ func main() {
 	ctx = bearychat.MustMakeContext(ctx)
 	ctx = github.MustMakeContext(ctx)
 
-	if err := task.Execute(ctx); err != nil {
-		log.Fatalf("execute tasks failed: %+v", err)
+	if err := task.ExecuteOnce(ctx); err != nil {
+		log.Fatalf("execute task failed: %+v", err)
 	}
 }
