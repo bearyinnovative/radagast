@@ -17,24 +17,24 @@ tasks = [
   "monitor-stale-issues"
 ]
 
+[github]
+api-token = ""
+
+[bearychat]
+rtm-token = "123"
+
+    [bearychat.users]
+    bcho = "hbc"
+    xtang = "tangxm"
+
 [monitor-stale-issues]
-github-token = "xxx"
+    [[monitor-stale-issues.repos]]
+    repo = "bearyinnovative/snitch"
+    bearychat-vchannel-id = "=bw52P"
 
-[[moniitor-stale-issues.repos]]
-repo = bearyinnovative/snitch
-users = {
-  bcho = "hbc"
-  xtang = "tangxm"
-}
-bearychat-webhook = "https://hook.bearychat.com/incoming/xxx"
-
-[[moniitor-stale-issues.repos]]
-repo = bearyinnovative/pensieve
-users = {
-  L42y = l42y
-  xtang = "tangxm"
-}
-bearychat-webhook = "https://hook.bearychat.com/incoming/xxx"
+    [[monitor-stale-issues.repos]]
+    repo = "bearyinnovative/pensieve"
+    bearychat-vchannel-id = "=bw52Q"
 ```
 
 ## Build
