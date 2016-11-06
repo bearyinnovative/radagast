@@ -6,6 +6,7 @@ import (
 
 	"github.com/bearyinnovative/radagast/bearychat"
 	"github.com/bearyinnovative/radagast/config"
+	"github.com/bearyinnovative/radagast/github"
 	"github.com/bearyinnovative/radagast/task"
 )
 
@@ -13,6 +14,7 @@ func main() {
 	ctx := context.Background()
 	ctx = config.MustMakeContext(ctx, "./radagast.toml")
 	ctx = bearychat.MustMakeContext(ctx)
+	ctx = github.MustMakeContext(ctx)
 
 	if err := task.Execute(ctx); err != nil {
 		log.Fatalf("execute tasks failed: %+v", err)

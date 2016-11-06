@@ -6,9 +6,8 @@ import (
 	"log"
 	"time"
 
-	"golang.org/x/oauth2"
-
 	"github.com/bearyinnovative/radagast/config"
+	gh "github.com/bearyinnovative/radagast/github"
 	"github.com/google/go-github/github"
 )
 
@@ -33,10 +32,7 @@ func makeTask(ctx context.Context) (*task, error) {
 		return nil, err
 	}
 
-	github, err := getGitHubClient(config)
-	if err != nil {
-		return nil, err
-	}
+	github := gh.ClientFromContext(ctx)
 
 	return &task{config, repos, github}, nil
 }
@@ -69,14 +65,6 @@ func Execute(ctx context.Context) error {
 	}
 
 	return nil
-}
-
-func getGitHubClient(config config.Config) (*github.Client, error) {
-	token := config.Get("github-token").String()
-	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
-	tc := oauth2.NewClient(oauth2.NoContext, ts)
-
-	return github.NewClient(tc), nil
 }
 
 func logf(f string, args ...interface{}) {
