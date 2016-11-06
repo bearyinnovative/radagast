@@ -26,8 +26,7 @@ func ToContext(c context.Context, client *bc.RTMClient) context.Context {
 }
 
 func MustMakeContext(c context.Context) context.Context {
-	config := config.FromContext(c)
-	rtmToken := config[CONFIG_KEY].(string)
+	rtmToken := config.FromContext(c).Get("bearychat-rtm-token").String()
 	rtmClient, err := bc.NewRTMClient(rtmToken)
 	if err != nil {
 		panic(err)

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/bearyinnovative/radagast/bearychat"
+	"github.com/bearyinnovative/radagast/config"
 	"github.com/google/go-github/github"
 	"github.com/hashicorp/go-multierror"
 )
@@ -23,24 +24,14 @@ type repo struct {
 }
 
 // TODO: better way to parse config
-func getReposFromConfig(config map[string]interface{}) (repos []repo, err error) {
-	irepos, ok := config["repos"].([]interface{})
-	if !ok {
-		err = errors.New("unable get repos")
-		return
-	}
-
-	for _, irepo := range irepos {
-		r, ok := irepo.(map[string]interface{})
-		if !ok {
-			err = errors.New("unable get repo")
-			return
-		}
+func getReposFromConfig(config config.Config) (repos []repo, err error) {
+	for _, irepo := range config.GetSlice("repos") {
+		repoConfig := irepo.Config()
 		userAliases := make(map[string]string)
-		for k, v := range r["bearychat-users"].(map[string]interface{}) {
+		for k, v := range repoConfig.Get("bearychat-users").Config() {
 			userAliases[k] = v.(string)
 		}
-		repoSlug := strings.Split(r["repo"].(string), "/")
+		repoSlug := strings.Split(repoConfig.Get("repo").String(), "/")
 		if len(repoSlug) != 2 {
 			err = errors.New("repo name should be `owner/name`")
 			return
@@ -49,7 +40,7 @@ func getReposFromConfig(config map[string]interface{}) (repos []repo, err error)
 			owner:                repoSlug[0],
 			name:                 repoSlug[1],
 			bearychatUserAliases: userAliases,
-			bearychatVchannelId:  r["bearychat-vchannel-id"].(string),
+			bearychatVchannelId:  repoConfig.Get("bearychat-vchannel-id").String(),
 			ReportChan:           make(chan string, 1024),
 		})
 	}

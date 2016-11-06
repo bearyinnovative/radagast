@@ -2,7 +2,6 @@ package monitor_stale_issues
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -21,7 +20,7 @@ var (
 )
 
 func Execute(ctx context.Context) error {
-	config := getConfig(ctx)
+	config := config.FromContext(ctx).Get(TaskName).Config()
 
 	repos, err := getReposFromConfig(config)
 	if err != nil {
@@ -52,17 +51,8 @@ func Execute(ctx context.Context) error {
 	return nil
 }
 
-func getConfig(ctx context.Context) map[string]interface{} {
-	config := config.FromContext(ctx)
-	return config[TaskName].(map[string]interface{})
-}
-
-func getGitHubClient(config map[string]interface{}) (*github.Client, error) {
-	token, ok := config["github-token"].(string)
-	if !ok || token == "" {
-		return nil, errors.New("`github-token` is required")
-	}
-
+func getGitHubClient(config config.Config) (*github.Client, error) {
+	token := config.Get("github-token").String()
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
 	tc := oauth2.NewClient(oauth2.NoContext, ts)
 
