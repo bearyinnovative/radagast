@@ -79,6 +79,10 @@ func (c Config) GetSlice(path string) (results []Result) {
 		for _, item := range slice {
 			results = append(results, makeResult(item))
 		}
+	case []map[string]interface{}:
+		for _, item := range slice {
+			results = append(results, makeResult(item))
+		}
 	default:
 	}
 
@@ -145,6 +149,10 @@ func makeResult(raw interface{}) (r Result) {
 	case Config:
 		r.Type = ResultTypeConfig
 		r.valueConfig = &v
+	case map[string]interface{}:
+		r.Type = ResultTypeConfig
+		config := Config(v)
+		r.valueConfig = &config
 	default:
 		r.Type = ResultTypeUnknown
 	}
