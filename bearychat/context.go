@@ -8,12 +8,12 @@ import (
 )
 
 const (
-	RTM_CLIENT_KEY = "radagast:bearychat-rtm-client"
-	CONFIG_KEY     = "bearychat-rtm-token"
+	KEY_RTM_CLIENT = "radagast:bearychat.rtm-client"
+	KEY_USERS      = "radagast:bearychat.users"
 )
 
 func RTMClientFromContext(c context.Context) *bc.RTMClient {
-	iclient := c.Value(RTM_CLIENT_KEY)
+	iclient := c.Value(KEY_RTM_CLIENT)
 	if client, ok := iclient.(*bc.RTMClient); ok {
 		return client
 	}
@@ -21,16 +21,27 @@ func RTMClientFromContext(c context.Context) *bc.RTMClient {
 	panic("unable to get bearychat rtm client from context")
 }
 
-func ToContext(c context.Context, client *bc.RTMClient) context.Context {
-	return context.WithValue(c, RTM_CLIENT_KEY, client)
+func UsersFromContext(c context.Context) config.Config {
+	iusers := c.Value(KEY_USERS)
+	if users, ok := iusers.(config.Config); ok {
+		return users
+	}
+
+	panic("unable to get bearychat users from context")
 }
 
 func MustMakeContext(c context.Context) context.Context {
-	rtmToken := config.FromContext(c).Get("bearychat-rtm-token").String()
+	config := config.FromContext(c)
+
+	rtmToken := config.Get("bearychat.rtm-token").String()
 	rtmClient, err := bc.NewRTMClient(rtmToken)
 	if err != nil {
 		panic(err)
 	}
+	c = context.WithValue(c, KEY_RTM_CLIENT, rtmClient)
 
-	return ToContext(c, rtmClient)
+	users := config.Get("bearychat.users").Config()
+	c = context.WithValue(c, KEY_USERS, users)
+
+	return c
 }
