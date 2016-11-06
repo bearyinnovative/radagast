@@ -38,7 +38,9 @@ func checkStalePullRequests(c context.Context, githubClient *github.Client, repo
 
 	var checkErr *multierror.Error
 	for i := 0; i < len(prs); i++ {
-		checkErr = multierror.Append(checkErr, <-checkErrChan)
+		if err := <-checkErrChan; err != nil {
+			checkErr = multierror.Append(checkErr, err)
+		}
 	}
 
 	return checkErr.ErrorOrNil()

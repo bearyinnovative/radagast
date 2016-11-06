@@ -57,7 +57,6 @@ func (r repo) SendReport(ctx context.Context) {
 			},
 		)
 		time.Sleep(1 * time.Second)
-
 	}
 }
 
@@ -71,7 +70,9 @@ func checkRepos(ctx context.Context, github *github.Client, repos []repo) error 
 
 	var checkErr *multierror.Error
 	for i := 0; i < len(repos); i++ {
-		checkErr = multierror.Append(checkErr, <-checkErrChan)
+		if err := <-checkErrChan; err != nil {
+			checkErr = multierror.Append(checkErr, err)
+		}
 	}
 
 	return checkErr.ErrorOrNil()
