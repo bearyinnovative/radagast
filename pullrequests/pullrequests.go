@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	pullRequestFreshTime = time.Duration(24 * time.Hour)
+	pullRequestFreshTime = time.Duration(8 * time.Hour)
 	pullRequestStaleTime = time.Duration(72 * time.Hour)
 )
 
@@ -63,7 +63,7 @@ func CheckStalePullRequest(repo *Repo, pullRequest *github.PullRequest) (stalePu
 	}
 
 	if (*pullRequest.CreatedAt).Add(pullRequestFreshTime).After(time.Now()) {
-		// GitHub's pr comment API seems like have a 24 hours lag,
+		// GitHub's pr comment API seems like have some lag,
 		// so we have to check later.
 		stalePullRequest.reason = "pull request is still fresh"
 		return
@@ -116,7 +116,7 @@ func (s StalePullRequest) Report() string {
 		)
 	case StaleTypeNoReviews:
 		return fmt.Sprintf(
-			"%s 还没有 review %s",
+			"%s 新的变更还没有 review 哦 %s",
 			s.reportPullRequest(),
 			s.reason,
 		)
