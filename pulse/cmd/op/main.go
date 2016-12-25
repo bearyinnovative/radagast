@@ -24,7 +24,7 @@ func main() {
 
 	if reindex {
 		if _, err := dbClient.DeleteIndex(db.PULSE_INDEX).Do(ctx); err != nil {
-			log.Fatalf("delete index failed")
+			log.Fatalf("delete index failed: %+v", err)
 		} else {
 			log.Printf("index deleted")
 		}
