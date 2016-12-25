@@ -11,8 +11,8 @@ const mapping = `{
   "mappings": {
     "pullrequests": {
       "properties": {
-        "id": {"type": "string", "index": "not_analyzed"},
-        "number": {"type": "string", "index": "not_analyzed"},
+        "id": {"type": "long"},
+        "number": {"type": "long"},
         "url": {"type": "string", "index": "not_analyzed"},
         "state": {"type": "string", "index": "not_analyzed"},
         "title": {"type": "string"},
