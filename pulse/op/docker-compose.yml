@@ -1,0 +1,9 @@
+version: '2'
+services:
+  es:
+    image: library/elasticsearch:5.1.1
+    volumes:
+      - ./volumes/es:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
