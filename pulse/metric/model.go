@@ -7,6 +7,11 @@ type User struct {
 	Name  string `json:"name"`
 }
 
+type Repo struct {
+	Owner string `json:"owner"`
+	Name  string `json:"name"`
+}
+
 type PullRequest struct {
 	ID           string    `json:"id"`
 	Number       string    `json:"number"`
@@ -22,6 +27,7 @@ type PullRequest struct {
 	Deletions    int       `json:"deletions"`
 	ChangedFiles int       `json:"changed_files"`
 
+	Repo      *Repo   `json:"repo"`
 	User      *User   `json:"user"`
 	MergedBy  *User   `json:"merged_by"`
 	Assignees []*User `json:"assignees"`
