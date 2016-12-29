@@ -22,6 +22,7 @@ api-token = ""
 
 [airtable]
 api-key = ""
+base = ""
 
 [bearychat]
 rtm-token = "123"
