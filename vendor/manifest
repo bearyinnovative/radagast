@@ -352,6 +352,14 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/fabioberger/airtable-go",
+			"repository": "https://github.com/fabioberger/airtable-go",
+			"vcs": "git",
+			"revision": "0e1a2e30885be4c728a5d63c93f33e8ff6fada86",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/golang/glog",
 			"repository": "https://github.com/golang/glog",
 			"vcs": "git",
