@@ -20,6 +20,9 @@ tasks = [
 [github]
 api-token = ""
 
+[airtable]
+api-key = ""
+
 [bearychat]
 rtm-token = "123"
 
