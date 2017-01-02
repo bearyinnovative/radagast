@@ -69,14 +69,15 @@ func indexPullRequests(ctx context.Context, repo metric.Repo, githubClient *gith
 
 func listPage(page int, repo metric.Repo, githubClient *github.Client) ([]*github.PullRequest, error) {
 	listOpts := &github.PullRequestListOptions{
-		State: "all",
-		Sort:  "updated",
+		State:     "all",
+		Sort:      "updated",
+		Direction: "desc",
 		ListOptions: github.ListOptions{
 			Page:    page,
 			PerPage: perPage,
 		},
 	}
 
-	prs, _, err := githubClient.PullRequests.List(*repo.Name, *repo.Name, listOpts)
+	prs, _, err := githubClient.PullRequests.List(*repo.Owner, *repo.Name, listOpts)
 	return prs, err
 }
