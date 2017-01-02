@@ -1,6 +1,7 @@
 package metric
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/go-github/github"
@@ -36,6 +37,24 @@ func NewRepo(repo *github.Repository) *Repo {
 		Owner: repo.Owner.Login,
 		Name:  repo.Name,
 	}
+}
+
+func NewRepoFromString(owner, name string) *Repo {
+	sowner := owner
+	sname := name
+
+	return &Repo{
+		Owner: &sowner,
+		Name:  &sname,
+	}
+}
+
+func (r Repo) String() string {
+	if r.Owner == nil || r.Name == nil {
+		return "<Repo: nil>"
+	}
+
+	return fmt.Sprintf("<Repo: %s/%s>", *r.Owner, *r.Name)
 }
 
 const TypePullRequest = "pullrequests"
@@ -94,4 +113,11 @@ func NewPullRequest(pr *github.PullRequest) *PullRequest {
 	}
 
 	return pullRequest
+}
+
+func (p PullRequest) String() string {
+	if p.Repo == nil || p.Number == nil {
+		return "<PullRequest: nil>"
+	}
+	return fmt.Sprintf("<PullRequest: %s(%d)>", p.Repo, *p.Number)
 }

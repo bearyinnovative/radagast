@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/bearyinnovative/radagast/config"
 	"github.com/bearyinnovative/radagast/github"
 	"github.com/bearyinnovative/radagast/pulse/db"
 	"github.com/bearyinnovative/radagast/pulse/metric"
+	"github.com/bearyinnovative/radagast/pulse/worker"
 )
 
 func main() {
@@ -16,17 +18,25 @@ func main() {
 	ctx = github.MustMakeContext(ctx)
 	ctx = db.MustMakeContext(ctx)
 
-	githubClient := github.ClientFromContext(ctx)
-	prs, _, err := githubClient.PullRequests.List("bearyinnovative", "snitch", nil)
-	if err != nil {
-		panic(err)
+	config := config.FromContext(ctx).Get("pulse").Config()
+	for _, r := range config.GetSlice("repos") {
+		repoConfig := r.Config()
+		repo := metric.NewRepoFromString(
+			repoConfig.Get("owner").String(),
+			repoConfig.Get("name").String(),
+		)
+		go indexRepo(ctx, *repo)
+
 	}
 
-	dbClient := db.ClientFromContext(ctx)
-	for _, pr := range prs {
-		err := metric.IndexPullRequest(ctx, dbClient, metric.NewPullRequest(pr))
-		if err != nil {
-			log.Fatalf("index pr failed %+v", err)
-		}
+	for {
+		time.Sleep(1e7 * time.Second)
 	}
+}
+
+func indexRepo(ctx context.Context, repo metric.Repo) {
+	githubClient := github.ClientFromContext(ctx)
+	esClient := db.ClientFromContext(ctx)
+
+	log.Fatal(worker.RunPullRequestIndexer(repo, githubClient, esClient))
 }
