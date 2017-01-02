@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"log"
-	"time"
 
 	"github.com/bearyinnovative/radagast/config"
 	"github.com/bearyinnovative/radagast/github"
+	"github.com/bearyinnovative/radagast/pulse/app"
 	"github.com/bearyinnovative/radagast/pulse/db"
 	"github.com/bearyinnovative/radagast/pulse/metric"
 	"github.com/bearyinnovative/radagast/pulse/worker"
@@ -29,9 +29,7 @@ func main() {
 
 	}
 
-	for {
-		time.Sleep(1e7 * time.Second)
-	}
+	app.Serve(ctx)
 }
 
 func indexRepo(ctx context.Context, repo metric.Repo) {
