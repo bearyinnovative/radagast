@@ -24,11 +24,7 @@ func main() {
 
 	dbClient := db.ClientFromContext(ctx)
 	for _, pr := range prs {
-		_, err := dbClient.Index().
-			Index(db.PULSE_INDEX).
-			Type("pullrequests").
-			BodyJson(metric.NewPullRequest(pr)).
-			Do(ctx)
+		err := metric.IndexPullRequest(ctx, dbClient, metric.NewPullRequest(pr))
 		if err != nil {
 			log.Fatalf("index pr failed %+v", err)
 		}

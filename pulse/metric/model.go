@@ -38,6 +38,8 @@ func NewRepo(repo *github.Repository) *Repo {
 	}
 }
 
+const TypePullRequest = "pullrequests"
+
 type PullRequest struct {
 	ID           *int       `json:"id"`
 	Number       *int       `json:"number"`
