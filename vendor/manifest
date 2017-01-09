@@ -541,6 +541,15 @@
 			"notests": true
 		},
 		{
+			"importpath": "golang.org/x/sync/errgroup",
+			"repository": "https://go.googlesource.com/sync",
+			"vcs": "git",
+			"revision": "450f422ab23cf9881c94e2db30cac0eb1b7cf80c",
+			"branch": "master",
+			"path": "/errgroup",
+			"notests": true
+		},
+		{
 			"importpath": "golang.org/x/sys/unix",
 			"repository": "https://go.googlesource.com/sys",
 			"vcs": "git",
@@ -661,6 +670,14 @@
 			"repository": "https://github.com/grpc/grpc-go",
 			"vcs": "git",
 			"revision": "ceb1db3272127bb48be3933ba391bf5d74951274",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "gopkg.in/olivere/elastic.v5",
+			"repository": "https://gopkg.in/olivere/elastic.v5",
+			"vcs": "git",
+			"revision": "b272fab42387a42585235d56f8c6b53b13ddfb7d",
 			"branch": "master",
 			"notests": true
 		}
