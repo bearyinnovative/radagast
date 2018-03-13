@@ -17,11 +17,11 @@ $ GOOS=linux go build -o feedback_watch-linux ./cmd/feedback_watch
 ### Feedback 值班
 
 ```
-$ ./feedback_shift feedback_watch.toml
+$ ./feedback_shift ./radagast.toml
 ```
 
 ```
-$ cat feedback_watch.toml
+$ cat ./radagast.toml
 
 tasks = [
   "feedback_watch"
